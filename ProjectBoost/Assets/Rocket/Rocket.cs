@@ -3,22 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Rocket : MonoBehaviour {
+public class Rocket : MonoBehaviour
+{
 
     Rigidbody rocketRigidbody;
     private Vector3 vectorUp;
 
+    AudioSource rocketAudio;
+
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         rocketRigidbody = GetComponent<Rigidbody>();
         vectorUp = Vector3.up;
+        rocketAudio = GetComponent<AudioSource>();
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         ProcessInput();
-	}
+    }
 
     private void ProcessInput()
     {
@@ -26,6 +32,14 @@ public class Rocket : MonoBehaviour {
         {
             print("Space pressed");
             rocketRigidbody.AddRelativeForce(vectorUp);
+
+            if (!rocketAudio.isPlaying)
+            {
+                rocketAudio.Play();
+            }
+        } else
+        {
+            rocketAudio.Stop();
         }
 
         if (Input.GetKey(KeyCode.LeftArrow))
