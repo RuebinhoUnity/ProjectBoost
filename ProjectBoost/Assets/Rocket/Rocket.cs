@@ -44,6 +44,11 @@ public class Rocket : MonoBehaviour
         rocketRigidbody.freezeRotation = true; // take manual control of rotation
         float rotationThisFrame = Time.deltaTime * rcsThrust;
 
+        if (Input.GetKey(KeyCode.R))
+        {
+            ResetRocketPosition();
+        }
+
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             print("LeftArrow pressed");
