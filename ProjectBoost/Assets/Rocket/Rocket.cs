@@ -7,11 +7,14 @@ public class Rocket : MonoBehaviour
 {
     Rigidbody rocketRigidbody;
     private Vector3 vectorUp;
+    private Vector3 rocketInitialPosition;
+    private Quaternion rocketInitialRotation;
 
     [SerializeField] private float rcsThrust = 100f;
     [SerializeField] private float mainBoosterThrust = 100f;
 
     AudioSource rocketAudio;
+    [SerializeField] UnityEngine.Object rocketPrefab;
 
     // Use this for initialization
     void Start()
@@ -19,7 +22,9 @@ public class Rocket : MonoBehaviour
         rocketRigidbody = GetComponent<Rigidbody>();
         vectorUp = Vector3.up;
         rocketAudio = GetComponent<AudioSource>();
-
+        rocketInitialPosition = transform.position;
+        rocketInitialRotation = transform.rotation;
+        
     }
 
     // Update is called once per frame
@@ -87,9 +92,16 @@ public class Rocket : MonoBehaviour
                 break;
 
             default:
-                Destroy(this.gameObject);
+                ResetRocketPosition();
                 break;
 
         }
+    }
+
+    private void ResetRocketPosition()
+    {
+        transform.position = rocketInitialPosition;
+        transform.rotation = rocketInitialRotation;
+        rocketRigidbody.velocity = Vector3.zero;
     }
 }
