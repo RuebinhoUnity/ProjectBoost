@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Rocket : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class Rocket : MonoBehaviour
 
     AudioSource rocketAudio;
     [SerializeField] UnityEngine.Object rocketPrefab;
+
+    enum State { Alive, Dying, Transcending };
+    private State rocketState = State.Alive;
 
     // Use this for initialization
     void Start()
@@ -30,7 +34,9 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (rocketState == State.Alive) { 
         ProcessInput();
+        }
     }
 
     private void ProcessInput()
@@ -84,11 +90,23 @@ public class Rocket : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        //ignore collisions when dead
+        if (rocketState != State.Alive)
+        {
+            return;
+        }
+
         switch (collision.gameObject.tag)
         {
             case "Friendly":
                 // do nothing
                 print("Collision is ok!");
+                break;
+
+            case "Finish":
+                // change to next level
+                rocketState = State.Transcending;
+                Invoke("LoadLevel", 1f);
                 break;
 
             case "Fuel":
@@ -97,14 +115,30 @@ public class Rocket : MonoBehaviour
                 break;
 
             default:
-                ResetRocketPosition();
+                //Load Level1/Scene0
+                rocketState = State.Dying;
+                Invoke("LoadFirstLevel", 1f);
+                //ResetRocketPosition();
                 break;
 
         }
     }
 
+    private void LoadNextLevel()
+    {
+        SceneManager.LoadScene(1);
+        rocketState = State.Alive;
+    }
+
+    private void LoadFirstLevel()
+    {
+        SceneManager.LoadScene(0);
+        rocketState = State.Alive;
+    }
+
     private void ResetRocketPosition()
     {
+        rocketState = State.Alive;
         transform.position = rocketInitialPosition;
         transform.rotation = rocketInitialRotation;
         rocketRigidbody.velocity = Vector3.zero;
