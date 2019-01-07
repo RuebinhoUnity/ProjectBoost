@@ -13,6 +13,13 @@ public class Rocket : MonoBehaviour
 
     [SerializeField] private float rcsThrust = 100f;
     [SerializeField] private float mainBoosterThrust = 100f;
+    [SerializeField] private AudioClip mainEngineSound;
+    [SerializeField] private AudioClip successSound;
+    [SerializeField] private AudioClip deathSound;
+
+    [SerializeField] private ParticleSystem mainEnginePS;
+    [SerializeField] private ParticleSystem successPS;
+    [SerializeField] private ParticleSystem deathPS;
 
     AudioSource rocketAudio;
     [SerializeField] UnityEngine.Object rocketPrefab;
@@ -41,11 +48,11 @@ public class Rocket : MonoBehaviour
 
     private void ProcessInput()
     {
-        Thrust();
-        Rotate();
+        RespondToThrustInput();
+        RespondToRotateInput();
     }
 
-    private void Rotate()
+    private void RespondToRotateInput()
     {
         rocketRigidbody.freezeRotation = true; // take manual control of rotation
         float rotationThisFrame = Time.deltaTime * rcsThrust;
@@ -70,22 +77,30 @@ public class Rocket : MonoBehaviour
         rocketRigidbody.freezeRotation = false; // rotation gets controlled by physics again
     }
 
-    private void Thrust()
+    private void RespondToThrustInput()
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            print("Space pressed");
-            rocketRigidbody.AddRelativeForce(vectorUp * mainBoosterThrust);
-
-            if (!rocketAudio.isPlaying)
-            {
-                rocketAudio.Play();
-            }
+            ApplyThrust();
         }
         else
         {
             rocketAudio.Stop();
+            mainEnginePS.Stop();
         }
+    }
+
+    private void ApplyThrust()
+    {
+        print("Space pressed");
+        rocketRigidbody.AddRelativeForce(vectorUp * mainBoosterThrust);
+
+        if (!rocketAudio.isPlaying)
+        {
+            rocketAudio.PlayOneShot(mainEngineSound);
+        }
+
+        mainEnginePS.Play();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -105,8 +120,7 @@ public class Rocket : MonoBehaviour
 
             case "Finish":
                 // change to next level
-                rocketState = State.Transcending;
-                Invoke("LoadLevel", 1f);
+                StartSuccessSequence();
                 break;
 
             case "Fuel":
@@ -115,25 +129,44 @@ public class Rocket : MonoBehaviour
                 break;
 
             default:
-                //Load Level1/Scene0
-                rocketState = State.Dying;
-                Invoke("LoadFirstLevel", 1f);
-                //ResetRocketPosition();
+                StartDeathSequence();
                 break;
 
         }
+    }
+
+    private void StartDeathSequence()
+    {
+        //Load Level1/Scene0
+        rocketState = State.Dying;
+        rocketAudio.Stop();
+        rocketAudio.PlayOneShot(deathSound);
+        deathPS.Play();
+        Invoke("LoadFirstLevel", 1f);
+        //ResetRocketPosition();
+    }
+
+    private void StartSuccessSequence()
+    {
+        rocketState = State.Transcending;
+        rocketAudio.Stop();
+        rocketAudio.PlayOneShot(successSound);
+        successPS.Play();
+        Invoke("LoadNextLevel", 1f);
     }
 
     private void LoadNextLevel()
     {
         SceneManager.LoadScene(1);
         rocketState = State.Alive;
+        successPS.Stop();
     }
 
     private void LoadFirstLevel()
     {
         SceneManager.LoadScene(0);
         rocketState = State.Alive;
+        deathPS.Stop();
     }
 
     private void ResetRocketPosition()
