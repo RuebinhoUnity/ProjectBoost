@@ -93,7 +93,7 @@ public class Rocket : MonoBehaviour
     private void ApplyThrust()
     {
         print("Space pressed");
-        rocketRigidbody.AddRelativeForce(vectorUp * mainBoosterThrust);
+        rocketRigidbody.AddRelativeForce(vectorUp * mainBoosterThrust * Time.deltaTime);
 
         if (!rocketAudio.isPlaying)
         {
