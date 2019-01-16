@@ -1668,7 +1668,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4040168986063790, guid: dc55d7b979bdcb045b020c76bd91c020, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -3.1906047
+      value: -16.3
       objectReference: {fileID: 0}
     - target: {fileID: 4040168986063790, guid: dc55d7b979bdcb045b020c76bd91c020, type: 2}
       propertyPath: m_LocalPosition.y
@@ -1725,8 +1725,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e948cd1ef293b5541a58afd2234fa27a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementVector: {x: 5, y: 0, z: 0}
-  period: 2
+  movementVector: {x: 30, y: 0, z: 0}
+  period: 5
   movementFactor: 0
 --- !u!1001 &2045103748
 Prefab:

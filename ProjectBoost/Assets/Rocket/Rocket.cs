@@ -27,6 +27,8 @@ public class Rocket : MonoBehaviour
     enum State { Alive, Dying, Transcending };
     private State rocketState = State.Alive;
 
+    [SerializeField] float levelLoadDelay = 1f;
+
     // Use this for initialization
     void Start()
     {
@@ -142,7 +144,7 @@ public class Rocket : MonoBehaviour
         rocketAudio.Stop();
         rocketAudio.PlayOneShot(deathSound);
         deathPS.Play();
-        Invoke("LoadFirstLevel", 1f);
+        Invoke("LoadFirstLevel", levelLoadDelay);
         //ResetRocketPosition();
     }
 
@@ -152,7 +154,7 @@ public class Rocket : MonoBehaviour
         rocketAudio.Stop();
         rocketAudio.PlayOneShot(successSound);
         successPS.Play();
-        Invoke("LoadNextLevel", 1f);
+        Invoke("LoadNextLevel", levelLoadDelay);
     }
 
     private void LoadNextLevel()
